@@ -1,0 +1,22 @@
+{
+  "name": "tp_node_cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "bin": {
+    "marvel-hero": "./index.js"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "fs": "0.0.1-security",
+    "inquirer": "^1.2.1",
+    "marvel-api": "^1.0.0",
+    "promise": "^7.1.1",
+    "sqlite": "^2.2.0"
+  },
+  "author": "Clément Romac",
+  "license": "ISC"
+}
