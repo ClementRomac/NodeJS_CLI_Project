@@ -5,6 +5,7 @@ const Promise = require('promise')
 const inquirer = require('inquirer')
 const db = require('sqlite')
 const fs = require('fs')
+const async = require('async')
  
 const marvel = api.createClient({
   publicKey: 'e0fed23cedb2f37c8bc25a3ee2edad77'
@@ -20,14 +21,26 @@ program
 program.parse(process.argv)
 
 if(program.list){
-	marvel.characters.findAll(100)
-  	.then((result) => {
-  		console.log(`${result.meta.count} heros trouvés :`)
-  		for(i = 0; i<result.meta.count; i++){
-  			console.log(result.data[i].name)
-  		}
-  	})
-  	.fail((err) => {console.log(err)});
+	var heros = [1, 101, 202, 303, 404, 505, 606, 707, 808, 909, 1010, 1111, 1212, 1313 ,1414];
+	var asyncTasks = [];
+	var list_heros = []
+
+	heros.forEach(function (j) {
+	    asyncTasks.push(function (callback) {
+	        marvel.characters.findAll(100, j).then((result) => {
+	        	for(z=0;z<result.meta.count;z++){
+	        		list_heros.push(result.data[z].name)
+	        	}
+
+	        	callback()
+	        })
+	    });
+	});
+
+	console.log("Voici la liste des heros :");
+	async.parallel(asyncTasks, function () {
+	    console.log(list_heros)
+	});
 }
 else if(program.infos){
 	GetCharacterInfos(program.infos).then((result) => {
@@ -179,3 +192,5 @@ function ListInfos(object, type){
 
 	return infos
 }
+
+

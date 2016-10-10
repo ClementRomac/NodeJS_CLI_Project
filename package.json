@@ -10,6 +10,7 @@
     "marvel-hero": "./index.js"
   },
   "dependencies": {
+    "async": "^2.0.1",
     "commander": "^2.9.0",
     "fs": "0.0.1-security",
     "inquirer": "^1.2.1",
