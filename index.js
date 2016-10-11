@@ -21,12 +21,13 @@ program
 program.parse(process.argv)
 
 if(program.list){
-	var heros = [1, 101, 202, 303, 404, 505, 606, 707, 808, 909, 1010, 1111, 1212, 1313 ,1414];
-	var asyncTasks = [];
+	var heros = [1, 101, 202, 303, 404, 505, 606, 707, 808, 909, 1010, 1111, 1212, 1313 ,1414] // boucle sur les 1485 heros
+	var asyncTasks = []
 	var list_heros = []
 
-	heros.forEach(function (j) {
-	    asyncTasks.push(function (callback) {
+	// FindAll retourne au max 100 objets donc obligation de boucler pour avoir les 1485
+	heros.forEach(function (j) { 
+	    asyncTasks.push(function (callback) { // Pour chaque index dans le tableau heros et ajoute au tableau asyncTask une fonction qui contient l'appel de l'api marvel
 	        marvel.characters.findAll(100, j).then((result) => {
 	        	for(z=0;z<result.meta.count;z++){
 	        		list_heros.push(result.data[z].name)
@@ -37,9 +38,9 @@ if(program.list){
 	    });
 	});
 
-	console.log("Voici la liste des heros :");
+	console.log("Voici la liste des heros :")
 	async.parallel(asyncTasks, function () {
-	    console.log(list_heros)
+	    console.log(list_heros.sort()) // On tri la liste parce que les résultats ont été renvoyé dans l'ordre de réponse des promises et donc les résultats sont mélangés
 	});
 }
 else if(program.infos){
@@ -67,11 +68,11 @@ else if(program.favorites){
 	])
 	.then((answer) => {
 		db.open('./database.sqlite').then(() => {
-			return db.run("CREATE TABLE IF NOT EXISTS favorites (name)")
+			return db.run("CREATE TABLE IF NOT EXISTS favorites (name)") // Ouverture + création de la table si elle n'exite pas
 		})
 		.then(() => {
 			switch(answer.task){
-				case 'Lister mes favoris':
+				case 'Lister mes favoris': // Liste le nom des favoris sauvgardés dans la bdd
 					db.all("SELECT name FROM favorites").then((data) => {
 						console.log("Vos favoris : \n")
 						for(i=0; i<data.length; i++){
@@ -79,7 +80,7 @@ else if(program.favorites){
 						}
 					})
 					break
-				case 'Ajouter un favoris':
+				case 'Ajouter un favoris': // Ajoute le nom du favoris dans la bdd + ajoute ses caractéristiques dans un fichier
 					var characterName
 					inquirer.prompt([
 					{
@@ -120,7 +121,7 @@ else if(program.favorites){
 						console.log('Ce personnage n\'est pas dans vos favoris')
 					})
 					break
-				case 'Voir les caractéristiques d\'un de mes favoris':
+				case 'Voir les caractéristiques d\'un de mes favoris': // Récupère les caractéristiques d'un favoris sauvegardé dans un fichier
 					inquirer.prompt([
 					{
 						type:'input',
@@ -145,7 +146,7 @@ else{
 	program.help()
 }
 
-function GetCharacterInfos(name){
+function GetCharacterInfos(name){ // Extrait les charactéristiques d'un héros
 	return new Promise((then, error)=>{
 		var characterInfos = ""
 		var characterId
@@ -180,7 +181,7 @@ function GetCharacterInfos(name){
 	})
 }
 
-function ListInfos(object, type){
+function ListInfos(object, type){ // Met en forme des infos d'un heros
 	infos = ""
 	infos += `Présent dans ${object.meta.count} ${type}`
 	if(object.meta.count > 0 ){
